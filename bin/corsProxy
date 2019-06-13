@@ -1,5 +1,119 @@
 #!/usr/bin/env node
+'use strict';
 
-const corsProxy = require('../src/corsProxyInit.js');
+function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
 
-corsProxy.init();
+var parseArgs = _interopDefault(require('minimist'));
+var inquirer = _interopDefault(require('inquirer'));
+var Configstore = _interopDefault(require('configstore'));
+var fs = _interopDefault(require('fs-extra'));
+var chalk = _interopDefault(require('chalk'));
+var msee = _interopDefault(require('msee'));
+var path = _interopDefault(require('path'));
+var fs$1 = _interopDefault(require('fs'));
+
+var CONFIG = {
+  CLI_PARAMS: {
+    v: 'version',
+    version: 'version',
+    h: 'help',
+    help: 'help',
+    a: 'add',
+    add: 'add',
+    config: 'config',
+  },
+  DEFAULT_CLI: 'help',
+  COMMANDS: [
+    'help',
+    'version',
+    'add',
+    'config',
+  ]
+};
+
+const CONFIG$1 = new Configstore('CORSPROXY');
+
+function add () {
+  inquirer.prompt([
+
+  ]).then((answers) => {
+
+  });
+}
+
+const CONFIG$2 = new Configstore('WORKTERRCLI');
+
+function config () {
+  console.log(chalk.blue('path: ' + CONFIG$2.path));
+
+  console.log(JSON.stringify(fs.readJSONSync(CONFIG$2.path), null, 2));
+
+}
+
+function help (args) {
+  let cmd = 'help';
+
+  const file = path.join(__dirname, '../doc', `${cmd}.md`);
+  let doc;
+
+  if (fs$1.existsSync(file)) {
+    doc = msee.parseFile(file);
+    console.log(doc);
+  } else {
+    console.log('oh! I can\'t help you');
+  }
+}
+
+var version = "0.0.0";
+
+function V () {
+
+  console.log(`version: ${version}`);
+}
+
+var CMD = {
+  add,
+  config,
+  help,
+  version: V,
+};
+
+function getcmd(argv) {
+    let res;
+    const cmds = argv._;
+
+    Object.keys(argv).some(function (key) {
+        if (CONFIG.CLI_PARAMS[key]) {
+            res = CONFIG.CLI_PARAMS[key];
+            return true;
+        }
+        return false;
+    });
+    if (!res) {
+        cmds.some((key) => {
+            if (CONFIG.CLI_PARAMS[key]) {
+                res = CONFIG.CLI_PARAMS[key];
+                return true;
+            }
+            return false;
+        });
+    }
+
+    return res;
+}
+
+// exec
+
+
+const argv = parseArgs(process.argv.slice(2));
+// console.log(argv);
+
+let cmd = getcmd(argv);
+
+// console.log(cmd);
+
+if(!CMD[cmd]) {
+    cmd = CONFIG.DEFAULT_CLI;
+}
+
+CMD[cmd](argv);

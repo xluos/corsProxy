@@ -1,21 +1,17 @@
-'use strict';
+import msee from 'msee'
+import path from 'path'
+import fs from 'fs'
 
-const msee = require('msee');
-const path = require('path');
-const fs = require('fs');
+export default function help (args) {
+  let cmd = 'help';
 
-module.exports = {
-  init: function (args) {
-    let cmd = 'help';
+  const file = path.join(__dirname, '../doc', `${cmd}.md`);
+  let doc;
 
-    const file = path.join(__dirname, '../../doc', `${cmd}.md`);
-    let doc;
-
-    if (fs.existsSync(file)) {
-      doc = msee.parseFile(file);
-      console.log(doc);
-    } else {
-      console.log('oh! I can\'t help you');
-    }
+  if (fs.existsSync(file)) {
+    doc = msee.parseFile(file);
+    console.log(doc);
+  } else {
+    console.log('oh! I can\'t help you');
   }
 }

@@ -1,14 +1,12 @@
-const inquirer = require('inquirer');
-const Configstore = require('configstore');
-const CONFIG = new Configstore('CORSPROXY');
+import inquirer from 'inquirer'
+import Configstore from 'configstore'
 
+const CONFIG = new Configstore('CORSPROXY')
 
-module.exports = {
-  init: function () {
-    inquirer.prompt([
-      
-    ]).then((answers) => {
-      
-    })
-  }
+export default function () {
+  inquirer.prompt([
+
+  ]).then((answers) => {
+
+  })
 }

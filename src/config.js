@@ -1,6 +1,4 @@
-'use strict';
-
-module.exports = {
+export default {
   CLI_PARAMS: {
     v: 'version',
     version: 'version',
