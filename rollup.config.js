@@ -33,5 +33,8 @@ export default {
     'minimist',
     'path',
     'fs',
+    'cors',
+    'http-proxy-middleware',
+    'express',
   ]
 };

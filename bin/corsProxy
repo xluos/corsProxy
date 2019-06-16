@@ -7,7 +7,7 @@ var parseArgs = _interopDefault(require('minimist'));
 var inquirer = _interopDefault(require('inquirer'));
 var Configstore = _interopDefault(require('configstore'));
 var fs = _interopDefault(require('fs-extra'));
-var chalk = _interopDefault(require('chalk'));
+var chalk$1 = _interopDefault(require('chalk'));
 var msee = _interopDefault(require('msee'));
 var path = _interopDefault(require('path'));
 var fs$1 = _interopDefault(require('fs'));
@@ -16,7 +16,6 @@ var CONFIG = {
   CLI_PARAMS: {
     v: 'version',
     version: 'version',
-    h: 'help',
     help: 'help',
     a: 'add',
     add: 'add',
@@ -44,7 +43,7 @@ function add () {
 const CONFIG$2 = new Configstore('WORKTERRCLI');
 
 function config () {
-  console.log(chalk.blue('path: ' + CONFIG$2.path));
+  console.log(chalk$1.blue('path: ' + CONFIG$2.path));
 
   console.log(JSON.stringify(fs.readJSONSync(CONFIG$2.path), null, 2));
 
@@ -64,11 +63,54 @@ function help (args) {
   }
 }
 
-var version = "0.0.0";
+var version = "0.0.1";
 
 function V () {
 
   console.log(`version: ${version}`);
+}
+
+const figlet = require('figlet');
+const chalk = require('chalk');
+
+function getHost (argv) {
+  if (argv.h || argv.host) {
+    return argv.h || argv.host
+  }
+
+  const argvs = argv._;
+  const len = argvs.length;
+  
+  for(let i = 0; i < len; i++) {
+    if (/^https?:\/\/[\w\.\/-]+/.test(argvs[i])) {
+      return argvs[i]
+    }
+  }
+  return ''
+  
+}
+
+const express = require('express');
+const cors = require('cors');
+const proxy = require('http-proxy-middleware');
+
+function startProxy (argv) {
+
+  const host = getHost(argv);
+
+  
+  const app = express();
+  // 添加跨域请求头
+  app.use(cors());
+
+  // 代理
+  app.use('/', proxy({ target: host, changeOrigin: true }));
+  // options 预检请求处理
+  app.options('/', function (req, res) {
+    res.status(204).send('ok');
+  });
+
+  app.listen(3000);
 }
 
 var CMD = {
@@ -76,30 +118,35 @@ var CMD = {
   config,
   help,
   version: V,
+  start: startProxy,
 };
 
-function getcmd(argv) {
-    let res;
-    const cmds = argv._;
+function getcmd (argv) {
+  let res;
+  const cmds = argv._;
 
-    Object.keys(argv).some(function (key) {
-        if (CONFIG.CLI_PARAMS[key]) {
-            res = CONFIG.CLI_PARAMS[key];
-            return true;
-        }
-        return false;
-    });
-    if (!res) {
-        cmds.some((key) => {
-            if (CONFIG.CLI_PARAMS[key]) {
-                res = CONFIG.CLI_PARAMS[key];
-                return true;
-            }
-            return false;
-        });
+  Object.keys(argv).some(function (key) {
+    if (CONFIG.CLI_PARAMS[key]) {
+      res = CONFIG.CLI_PARAMS[key];
+      return true;
     }
+    return false;
+  });
+  if (!res) {
+    cmds.some((key) => {
+      if (CONFIG.CLI_PARAMS[key]) {
+        res = CONFIG.CLI_PARAMS[key];
+        return true;
+      }
+      return false;
+    });
+  }
 
-    return res;
+  if (!res && getHost(argv)) {
+    res = 'start';
+  }
+
+  return res;
 }
 
 // exec
@@ -112,8 +159,8 @@ let cmd = getcmd(argv);
 
 // console.log(cmd);
 
-if(!CMD[cmd]) {
-    cmd = CONFIG.DEFAULT_CLI;
+if (!CMD[cmd]) {
+  cmd = CONFIG.DEFAULT_CLI;
 }
 
 CMD[cmd](argv);

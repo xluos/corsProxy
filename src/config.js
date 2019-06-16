@@ -2,7 +2,6 @@ export default {
   CLI_PARAMS: {
     v: 'version',
     version: 'version',
-    h: 'help',
     help: 'help',
     a: 'add',
     add: 'add',

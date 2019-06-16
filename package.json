@@ -1,10 +1,11 @@
 {
   "name": "corsproxy",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "corsProxy cli",
   "main": "./src/corsProxyInit.js",
   "scripts": {
     "build": "rollup -c",
+    "dev": "rollup -c -w",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -31,8 +32,11 @@
   "dependencies": {
     "chalk": "^2.3.2",
     "configstore": "^4.0.0",
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
     "figlet": "^1.2.1",
     "fs-extra": "^7.0.1",
+    "http-proxy-middleware": "^0.19.1",
     "inquirer": "^6.3.1",
     "inquirer-autocomplete-prompt": "^1.0.1",
     "minimist": "^1.2.0",
